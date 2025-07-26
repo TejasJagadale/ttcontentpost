@@ -19,18 +19,17 @@ const FormComponent = () => {
   const [posts, setPosts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // New state for loader
   const fileInputRef = useRef(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Set the file in form data
       setFormData((prev) => ({
         ...prev,
         image: file
       }));
 
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
@@ -48,7 +47,6 @@ const FormComponent = () => {
     fileInputRef.current.value = "";
   };
 
-  // Ensure your categories array is defined
   const categories = [
     "Technology",
     "Business",
@@ -60,9 +58,7 @@ const FormComponent = () => {
     "Education"
   ];
 
-  // Function to handle category selection
   const handleCategorySelect = (category) => {
-    // setSelectedListCategory(category);
     setShowCategoryModal(false);
     fetchPosts(category);
   };
@@ -93,7 +89,6 @@ const FormComponent = () => {
       [name]: value
     }));
 
-    // Update word count for summary and description
     if (name === "summary" || name === "description") {
       const words = value.trim() === "" ? 0 : value.trim().split(/\s+/).length;
       setWordCount((prev) => ({
@@ -106,17 +101,18 @@ const FormComponent = () => {
   // Function to fetch posts
   const fetchPosts = async (category) => {
     try {
+      setIsLoading(true); // Start loader
       const response = await axios.get(
         `https://todaytalkserver.onrender.com/api/contents/${category}`
       );
-      console.log(response.data);
-      
       setPosts(response.data);
       setSelectedCategory(category);
       setShowModal(true);
     } catch (error) {
       console.error("Error fetching posts:", error);
       alert(`Error: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsLoading(false); // Stop loader
     }
   };
 
@@ -166,11 +162,11 @@ const FormComponent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loader when form is submitted
 
     try {
       let imageUrl = "";
 
-      // Upload image first if exists
       if (formData.image) {
         const s3Response = await uploadToS3(formData.image);
         imageUrl = s3Response.key;
@@ -178,12 +174,10 @@ const FormComponent = () => {
       }
 
       const contentData = {
-        ...formData, // Spread all form data
-        imageUrl, // Add the image URL
+        ...formData,
+        imageUrl,
         tags: Array.isArray(formData.tags) ? formData.tags : [formData.tags]
       };
-
-      console.log("Submitting:", contentData);
 
       const response = await axios.post(
         `https://todaytalkserver.onrender.com/api/contents/${formData.category}`,
@@ -192,7 +186,6 @@ const FormComponent = () => {
 
       if (!response.data.imageUrl) {
         console.warn("Backend didn't return imageUrl, checking saved data...");
-        // Verify with a separate GET request if needed
       }
 
       alert(`Content saved successfully!`);
@@ -200,12 +193,13 @@ const FormComponent = () => {
     } catch (error) {
       console.error("Submission failed:", error);
       alert(`Error: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsLoading(false); // Stop loader when done
     }
   };
 
   const uploadToS3 = async (file) => {
     try {
-      // Get upload details from backend
       const { data } = await axios.get(
         "https://todaytalkserver.onrender.com/api/s3/upload-url",
         {
@@ -213,17 +207,12 @@ const FormComponent = () => {
         }
       );
 
-      console.log(data);
-      
-
-      // Upload file to S3
       await axios.put(data.uploadUrl, file, {
         headers: { "Content-Type": file.type }
       });
 
-      // Return the PUBLIC URL (not the pre-signed URL)
       return {
-        location: data.publicUrl, // Use the public URL from backend
+        location: data.publicUrl,
         key: `https://videosbucketlookit.s3.ap-south-1.amazonaws.com/${data.key}`
       };
     } catch (error) {
@@ -234,6 +223,11 @@ const FormComponent = () => {
 
   return (
     <div className="form-container">
+      {isLoading && (
+        <div className="loader-overlay">
+          <div className="loader"></div>
+        </div>
+      )}
       <h2>Create New Content</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -360,8 +354,8 @@ const FormComponent = () => {
           </div>
         </div>
 
-        <button type="submit" className="submit-btn">
-          Submit
+        <button type="submit" className="submit-btn" disabled={isLoading}>
+          {isLoading ? "Submitting..." : "Submit"}
         </button>
       </form>
       {/* Add the List Posts button */}
