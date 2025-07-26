@@ -1,0 +1,286 @@
+.form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Add these styles to your existing CSS */
+.image-preview {
+  margin-top: 10px;
+  position: relative;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 5px;
+  cursor: pointer;
+}
+
+.remove-image-btn:hover {
+  background: rgba(255, 0, 0, 0.9);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group select,
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group select {
+  height: 40px;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.word-count {
+  text-align: right;
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+}
+
+.tag-item input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.tag-item label {
+  margin: 0;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-switch {
+  width: 50px;
+  height: 26px;
+  background-color: #ccc;
+  border-radius: 13px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-switch.active {
+  background-color: #4caf50;
+}
+
+.toggle-knob {
+  width: 22px;
+  height: 22px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+}
+
+.toggle-switch.active .toggle-knob {
+  transform: translateX(24px);
+}
+
+/* Category Selection Modal Styles */
+.categories-list {
+  margin-top: 20px;
+}
+
+.category-item {
+  padding: 10px 15px;
+  margin: 5px 0;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.category-item:hover {
+  background-color: #e0e0e0;
+}
+
+.category-item.selected {
+  background-color: #4a6fa5;
+  color: white;
+}
+
+.submit-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}
+
+/* List Posts Button */
+.list-posts-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.list-posts-btn {
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.list-posts-btn:hover {
+  background-color: #3a5a8a;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.posts-list {
+  margin-top: 20px;
+}
+
+.post-item {
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+}
+
+.post-item h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.post-summary {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.post-image-container {
+  margin: 10px 0;
+}
+
+.post-image {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 4px;
+}
+
+.post-tags {
+  margin: 10px 0;
+}
+
+.post-tags .tag {
+  display: inline-block;
+  background-color: #f0f0f0;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-right: 5px;
+  font-size: 12px;
+}
+
+.post-status {
+  font-size: 14px;
+  color: #777;
+  margin-top: 5px;
+}
