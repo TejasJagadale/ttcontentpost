@@ -11,7 +11,7 @@ const FormComponent = () => {
     tags: [],
     status: false,
     trending: false,
-    image: null // Added for image upload
+    image: null
   });
 
   const [previewImage, setPreviewImage] = useState(null);
@@ -19,7 +19,8 @@ const FormComponent = () => {
   const [posts, setPosts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // New state for loader
+  const [isLoading, setIsLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null); // Track which post is being edited
   const fileInputRef = useRef(null);
 
   const handleImageChange = (e) => {
@@ -63,7 +64,6 @@ const FormComponent = () => {
     fetchPosts(category);
   };
 
-  // Ensure your tags array is defined
   const allTags = [
     "Innovation",
     "Startup",
@@ -98,10 +98,9 @@ const FormComponent = () => {
     }
   };
 
-  // Function to fetch posts
   const fetchPosts = async (category) => {
     try {
-      setIsLoading(true); // Start loader
+      setIsLoading(true);
       const response = await axios.get(
         `https://todaytalkserver.onrender.com/api/contents/${category}`
       );
@@ -112,7 +111,7 @@ const FormComponent = () => {
       console.error("Error fetching posts:", error);
       alert(`Error: ${error.response?.data?.message || error.message}`);
     } finally {
-      setIsLoading(false); // Stop loader
+      setIsLoading(false);
     }
   };
 
@@ -158,19 +157,28 @@ const FormComponent = () => {
       image: null
     });
     setPreviewImage(null);
+    setEditingId(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Start loader when form is submitted
+    setIsLoading(true);
 
     try {
-      let imageUrl = "";
+      // Validate required fields
+      if (!formData.category) {
+        throw new Error("Category is required");
+      }
 
-      if (formData.image) {
+      let imageUrl = formData.imageUrl || "";
+
+      // Only upload new image if it's a file (not an existing URL)
+      if (formData.image && typeof formData.image !== "string") {
         const s3Response = await uploadToS3(formData.image);
         imageUrl = s3Response.key;
-        console.log("Image uploaded to:", imageUrl);
       }
 
       const contentData = {
@@ -179,24 +187,80 @@ const FormComponent = () => {
         tags: Array.isArray(formData.tags) ? formData.tags : [formData.tags]
       };
 
-      const response = await axios.post(
-        `https://todaytalkserver.onrender.com/api/contents/${formData.category}`,
-        contentData
-      );
-
-      if (!response.data.imageUrl) {
-        console.warn("Backend didn't return imageUrl, checking saved data...");
+      let response;
+      if (editingId) {
+        // For updates, use the category from formData
+        response = await axios.put(
+          `https://todaytalkserver.onrender.com/api/contents/${formData.category}/${editingId}`,
+          contentData
+        );
+        alert(`Content updated successfully!`);
+      } else {
+        // For new posts, also use the category from formData
+        response = await axios.post(
+          `https://todaytalkserver.onrender.com/api/contents/${formData.category}`,
+          contentData
+        );
+        alert(`Content saved successfully!`);
       }
 
-      alert(`Content saved successfully!`);
       resetForm();
+      if (selectedCategory) {
+        fetchPosts(selectedCategory);
+      }
     } catch (error) {
       console.error("Submission failed:", error);
       alert(`Error: ${error.response?.data?.message || error.message}`);
     } finally {
-      setIsLoading(false); // Stop loader when done
+      setIsLoading(false);
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+
+  //   try {
+  //     let imageUrl = formData.imageUrl || "";
+
+  //     if (formData.image && typeof formData.image !== 'string') {
+  //       const s3Response = await uploadToS3(formData.image);
+  //       imageUrl = s3Response.key;
+  //       console.log("Image uploaded to:", imageUrl);
+  //     }
+
+  //     const contentData = {
+  //       ...formData,
+  //       imageUrl,
+  //       tags: Array.isArray(formData.tags) ? formData.tags : [formData.tags]
+  //     };
+
+  //     let response;
+  //     if (editingId) {
+  //       response = await axios.put(
+  //         `https://todaytalkserver.onrender.com/api/contents/${formData.category}/${editingId}`,
+  //         contentData
+  //       );
+  //       alert(`Content updated successfully!`);
+  //     } else {
+  //       response = await axios.post(
+  //         `https://todaytalkserver.onrender.com/api/contents/${formData.category}`,
+  //         contentData
+  //       );
+  //       alert(`Content saved successfully!`);
+  //     }
+
+  //     resetForm();
+  //     if (selectedCategory) {
+  //       fetchPosts(selectedCategory);
+  //     }
+  //   } catch (error) {
+  //     console.error("Submission failed:", error);
+  //     alert(`Error: ${error.response?.data?.message || error.message}`);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const uploadToS3 = async (file) => {
     try {
@@ -221,6 +285,44 @@ const FormComponent = () => {
     }
   };
 
+  const handleEdit = (post) => {
+    setShowModal(false);
+    setEditingId(post._id);
+    setFormData({
+      category: post.category, // Ensure this is set
+      title: post.title,
+      summary: post.summary,
+      description: post.description,
+      tags: post.tags,
+      status: post.status,
+      trending: post.trending,
+      image: post.imageUrl,
+      imageUrl: post.imageUrl
+    });
+
+    if (post.imageUrl) {
+      setPreviewImage(post.imageUrl);
+    }
+  };
+
+  const handleDelete = async (postId) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        setIsLoading(true);
+        await axios.delete(
+          `https://todaytalkserver.onrender.com/api/contents/${selectedCategory}/${postId}`
+        );
+        alert("Post deleted successfully!");
+        fetchPosts(selectedCategory); // Refresh the posts list
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        alert(`Error: ${error.response?.data?.message || error.message}`);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="form-container">
       {isLoading && (
@@ -228,10 +330,10 @@ const FormComponent = () => {
           <div className="loader"></div>
         </div>
       )}
-      <h2>Create New Content</h2>
+      <h2>{editingId ? "Edit Content" : "Create New Content"}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="category">Category</label>
+          <label htmlFor="category">Category *</label>
           <select
             id="category"
             name="category"
@@ -311,6 +413,14 @@ const FormComponent = () => {
               </button>
             </div>
           )}
+          {editingId && formData.imageUrl && !previewImage && (
+            <div className="image-preview">
+              <img src={formData.imageUrl} alt="Current" />
+              <p className="image-note">
+                Current image (upload new to replace)
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="form-group">
@@ -354,11 +464,23 @@ const FormComponent = () => {
           </div>
         </div>
 
-        <button type="submit" className="submit-btn" disabled={isLoading}>
-          {isLoading ? "Submitting..." : "Submit"}
-        </button>
+        <div className="form-actions">
+          <button type="submit" className="submit-btn" disabled={isLoading}>
+            {isLoading ? "Processing..." : editingId ? "Update" : "Submit"}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={resetForm}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
-      {/* Add the List Posts button */}
+
       <div className="list-posts-container">
         <button
           type="button"
@@ -394,10 +516,9 @@ const FormComponent = () => {
         </div>
       )}
 
-      {/* Modal for displaying posts */}
       {showModal && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content posts-modal">
             <button className="close-modal" onClick={() => setShowModal(false)}>
               ×
             </button>
@@ -405,7 +526,7 @@ const FormComponent = () => {
             <div className="posts-list">
               {posts.length > 0 ? (
                 posts.map((post, index) => (
-                  <div key={index} className="post-item">
+                  <div key={post._id} className="post-item">
                     <h4>{post.title}</h4>
                     <p className="post-summary">{post.summary}</p>
                     {post.imageUrl && (
@@ -427,6 +548,20 @@ const FormComponent = () => {
                     <div className="post-status">
                       Status: {post.status ? "Active" : "Inactive"} | Trending:{" "}
                       {post.trending ? "Yes" : "No"}
+                    </div>
+                    <div className="post-actions">
+                      <button
+                        className="edit-btn"
+                        onClick={() => handleEdit(post)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDelete(post._id)}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 ))
