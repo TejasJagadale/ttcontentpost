@@ -266,12 +266,12 @@ body {
 }
 
 .toggle-knob {
-  width: 18px;
-  height: 18px;
+  width: 23px;
+  height: 23px;
   background-color: white;
   border-radius: 50%;
   position: absolute;
-  top: 1px;
+  top: 1.5px;
   left: 1px;
   transition: transform 0.3s;
 }
@@ -324,7 +324,7 @@ body {
 }
 
 .toggle-switch.active .toggle-knob1 {
-  left: 4px;
+  left: 27px;
 }
 
 .toggle-item span {
