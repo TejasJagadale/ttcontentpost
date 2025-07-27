@@ -323,6 +323,48 @@ const FormComponent = () => {
     }
   };
 
+  // Handle status toggle for list items
+  const handleStatusToggle = async (postId, newStatus) => {
+    try {
+      setIsLoading(true);
+      await axios.patch(
+        `https://todaytalkserver.onrender.com/api/contents/toggle-status/${postId}`,
+        { status: newStatus }
+      );
+      setPosts(
+        posts.map((post) =>
+          post._id === postId ? { ...post, status: newStatus } : post
+        )
+      );
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert(`Error: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle trending toggle for list items
+  const handleTrendingToggle = async (postId, newTrending) => {
+    try {
+      setIsLoading(true);
+      await axios.patch(
+        `https://todaytalkserver.onrender.com/api/contents/toggle-trending/${postId}`,
+        { trending: newTrending }
+      );
+      setPosts(
+        posts.map((post) =>
+          post._id === postId ? { ...post, trending: newTrending } : post
+        )
+      );
+    } catch (error) {
+      console.error("Error updating trending:", error);
+      alert(`Error: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="form-container">
       {isLoading && (
@@ -330,16 +372,20 @@ const FormComponent = () => {
           <div className="loader"></div>
         </div>
       )}
+
       <h2>{editingId ? "Edit Content" : "Create New Content"}</h2>
+
       <form onSubmit={handleSubmit}>
+        {/* Category Select */}
         <div className="form-group">
-          <label htmlFor="category">Category *</label>
+          <label htmlFor="category">Category</label>
           <select
             id="category"
             name="category"
             value={formData.category}
             onChange={handleChange}
             required
+            disabled={!!editingId}
           >
             <option value="">Select a category</option>
             {categories.map((category, index) => (
@@ -350,6 +396,7 @@ const FormComponent = () => {
           </select>
         </div>
 
+        {/* Title Input */}
         <div className="form-group">
           <label htmlFor="title">Title</label>
           <input
@@ -363,6 +410,7 @@ const FormComponent = () => {
           />
         </div>
 
+        {/* Summary Textarea */}
         <div className="form-group">
           <label htmlFor="summary">Summary (max 150 words)</label>
           <textarea
@@ -377,6 +425,7 @@ const FormComponent = () => {
           <div className="word-count">{wordCount.summary}/150 words</div>
         </div>
 
+        {/* Description Textarea */}
         <div className="form-group">
           <label htmlFor="description">Description (max 1000 words)</label>
           <textarea
@@ -391,6 +440,7 @@ const FormComponent = () => {
           <div className="word-count">{wordCount.description}/1000 words</div>
         </div>
 
+        {/* Image Upload */}
         <div className="form-group">
           <label htmlFor="image">Image</label>
           <input
@@ -423,6 +473,7 @@ const FormComponent = () => {
           )}
         </div>
 
+        {/* Tags Selection */}
         <div className="form-group">
           <label>Tags</label>
           <div className="tags-container">
@@ -440,6 +491,7 @@ const FormComponent = () => {
           </div>
         </div>
 
+        {/* Status and Trending Toggles */}
         <div className="toggle-group">
           <div className="toggle-item">
             <label>Status</label>
@@ -464,6 +516,7 @@ const FormComponent = () => {
           </div>
         </div>
 
+        {/* Form Actions */}
         <div className="form-actions">
           <button type="submit" className="submit-btn" disabled={isLoading}>
             {isLoading ? "Processing..." : editingId ? "Update" : "Submit"}
@@ -481,6 +534,7 @@ const FormComponent = () => {
         </div>
       </form>
 
+      {/* List Posts Button */}
       <div className="list-posts-container">
         <button
           type="button"
@@ -491,6 +545,7 @@ const FormComponent = () => {
         </button>
       </div>
 
+      {/* Category Selection Modal */}
       {showCategoryModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -516,6 +571,7 @@ const FormComponent = () => {
         </div>
       )}
 
+      {/* Posts List Modal */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content posts-modal">
@@ -525,7 +581,7 @@ const FormComponent = () => {
             <h3>Posts in {selectedCategory}</h3>
             <div className="posts-list">
               {posts.length > 0 ? (
-                posts.map((post, index) => (
+                posts.map((post) => (
                   <div key={post._id} className="post-item">
                     <h4>{post.title}</h4>
                     <p className="post-summary">{post.summary}</p>
@@ -545,10 +601,6 @@ const FormComponent = () => {
                         </span>
                       ))}
                     </div>
-                    <div className="post-status">
-                      Status: {post.status ? "Active" : "Inactive"} | Trending:{" "}
-                      {post.trending ? "Yes" : "No"}
-                    </div>
                     <div className="post-actions">
                       <button
                         className="edit-btn"
@@ -562,6 +614,36 @@ const FormComponent = () => {
                       >
                         Delete
                       </button>
+                    </div>
+                    <div className="toggle-actions">
+                      <div className="toggle-group">
+                        <span>Status:</span>
+                        <div
+                          className={`toggle-switch ${
+                            post.status ? "active" : ""
+                          }`}
+                          onClick={() =>
+                            handleStatusToggle(post._id, !post.status)
+                          }
+                        >
+                          <div className="toggle-knob"></div>
+                        </div>
+                        <span>{post.status ? "Active" : "Inactive"}</span>
+                      </div>
+                      <div className="toggle-group">
+                        <span>Trending:</span>
+                        <div
+                          className={`toggle-switch ${
+                            post.trending ? "active" : ""
+                          }`}
+                          onClick={() =>
+                            handleTrendingToggle(post._id, !post.trending)
+                          }
+                        >
+                          <div className="toggle-knob"></div>
+                        </div>
+                        <span>{post.trending ? "Yes" : "No"}</span>
+                      </div>
                     </div>
                   </div>
                 ))
