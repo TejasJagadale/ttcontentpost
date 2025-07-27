@@ -626,7 +626,7 @@ const FormComponent = () => {
                             handleStatusToggle(post._id, !post.status)
                           }
                         >
-                          <div className="toggle-knob"></div>
+                          <div className="toggle-knob1"></div>
                         </div>
                         <span>{post.status ? "Active" : "Inactive"}</span>
                       </div>
@@ -640,7 +640,7 @@ const FormComponent = () => {
                             handleTrendingToggle(post._id, !post.trending)
                           }
                         >
-                          <div className="toggle-knob"></div>
+                          <div className="toggle-knob1"></div>
                         </div>
                         <span>{post.trending ? "Yes" : "No"}</span>
                       </div>
