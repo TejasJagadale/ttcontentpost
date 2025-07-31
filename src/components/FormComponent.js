@@ -56,7 +56,9 @@ const FormComponent = () => {
     "Health",
     "Entertainment",
     "Sports",
-    "Education"
+    "Education",
+    "Stories",
+    "Information"
   ];
 
   const handleCategorySelect = (category) => {
@@ -74,7 +76,12 @@ const FormComponent = () => {
     "Football",
     "Learning",
     "AI",
-    "Finance"
+    "Finance",
+    "Short Stories",
+    "Narratives",
+    "Inspirational",
+    "Knowledge",
+    "Personal Stories"
   ];
 
   const [wordCount, setWordCount] = useState({
@@ -215,52 +222,6 @@ const FormComponent = () => {
       setIsLoading(false);
     }
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-
-  //   try {
-  //     let imageUrl = formData.imageUrl || "";
-
-  //     if (formData.image && typeof formData.image !== 'string') {
-  //       const s3Response = await uploadToS3(formData.image);
-  //       imageUrl = s3Response.key;
-  //       console.log("Image uploaded to:", imageUrl);
-  //     }
-
-  //     const contentData = {
-  //       ...formData,
-  //       imageUrl,
-  //       tags: Array.isArray(formData.tags) ? formData.tags : [formData.tags]
-  //     };
-
-  //     let response;
-  //     if (editingId) {
-  //       response = await axios.put(
-  //         `https://todaytalkserver.onrender.com/api/contents/${formData.category}/${editingId}`,
-  //         contentData
-  //       );
-  //       alert(`Content updated successfully!`);
-  //     } else {
-  //       response = await axios.post(
-  //         `https://todaytalkserver.onrender.com/api/contents/${formData.category}`,
-  //         contentData
-  //       );
-  //       alert(`Content saved successfully!`);
-  //     }
-
-  //     resetForm();
-  //     if (selectedCategory) {
-  //       fetchPosts(selectedCategory);
-  //     }
-  //   } catch (error) {
-  //     console.error("Submission failed:", error);
-  //     alert(`Error: ${error.response?.data?.message || error.message}`);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const uploadToS3 = async (file) => {
     try {
