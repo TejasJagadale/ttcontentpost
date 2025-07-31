@@ -58,7 +58,8 @@ const FormComponent = () => {
     "Sports",
     "Education",
     "Stories",
-    "Information"
+    "Information",
+    "Updates"
   ];
 
   const handleCategorySelect = (category) => {
