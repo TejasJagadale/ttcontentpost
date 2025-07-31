@@ -160,7 +160,7 @@ body {
 }
 
 .form-group textarea {
-  min-height: 120px;
+  height: 30vh;
   resize: vertical;
 }
 
