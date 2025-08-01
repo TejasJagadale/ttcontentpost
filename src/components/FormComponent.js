@@ -115,7 +115,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://todaytalkserver.onrender.com/api/contents/${category}`
+        `https://ttofficial.onrender.com/api/contents/${category}`
       );
       setPosts(response.data);
       setSelectedCategory(category);
@@ -204,14 +204,14 @@ const FormComponent = () => {
       if (editingId) {
         // For updates, use the category from formData
         response = await axios.put(
-          `https://todaytalkserver.onrender.com/api/contents/${formData.category}/${editingId}`,
+          `https://ttofficial.onrender.com/api/contents/${formData.category}/${editingId}`,
           contentData
         );
         alert(`Content updated successfully!`);
       } else {
         // For new posts, also use the category from formData
         response = await axios.post(
-          `https://todaytalkserver.onrender.com/api/contents/${formData.category}`,
+          `https://ttofficial.onrender.com/api/contents/${formData.category}`,
           contentData
         );
         alert(`Content saved successfully!`);
@@ -232,7 +232,7 @@ const FormComponent = () => {
   const uploadToS3 = async (file) => {
     try {
       const { data } = await axios.get(
-        "https://todaytalkserver.onrender.com/api/s3/upload-url",
+        "https://ttofficial.onrender.com/api/s3/upload-url",
         {
           params: { fileType: file.type }
         }
@@ -244,7 +244,7 @@ const FormComponent = () => {
 
       return {
         location: data.publicUrl,
-        key: `https://videosbucketlookit.s3.ap-south-1.amazonaws.com/${data.key}`
+        key: `https://todaytalksimageupload.s3.ap-south-1.amazonaws.com/${data.key}`
       };
     } catch (error) {
       console.error("S3 Upload Failed:", error);
@@ -277,7 +277,7 @@ const FormComponent = () => {
       try {
         setIsLoading(true);
         await axios.delete(
-          `https://todaytalkserver.onrender.com/api/contents/${selectedCategory}/${postId}`
+          `https://ttofficial.onrender.com/api/contents/${selectedCategory}/${postId}`
         );
         alert("Post deleted successfully!");
         fetchPosts(selectedCategory); // Refresh the posts list
@@ -295,7 +295,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       await axios.patch(
-        `https://todaytalkserver.onrender.com/api/contents/toggle-status/${postId}`,
+        `https://ttofficial.onrender.com/api/contents/toggle-status/${postId}`,
         { status: newStatus }
       );
       setPosts(
@@ -316,7 +316,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       await axios.patch(
-        `https://todaytalkserver.onrender.com/api/contents/toggle-trending/${postId}`,
+        `https://ttofficial.onrender.com/api/contents/toggle-trending/${postId}`,
         { trending: newTrending }
       );
       setPosts(
