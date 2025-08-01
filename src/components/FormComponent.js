@@ -115,7 +115,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/api/contents/${category}`
+        `https://todaytalkserver.onrender.com/api/contents/${category}`
       );
       setPosts(response.data);
       setSelectedCategory(category);
@@ -204,14 +204,14 @@ const FormComponent = () => {
       if (editingId) {
         // For updates, use the category from formData
         response = await axios.put(
-          `http://localhost:3000/api/contents/${formData.category}/${editingId}`,
+          `https://todaytalkserver.onrender.com/api/contents/${formData.category}/${editingId}`,
           contentData
         );
         alert(`Content updated successfully!`);
       } else {
         // For new posts, also use the category from formData
         response = await axios.post(
-          `http://localhost:3000/api/contents/${formData.category}`,
+          `https://todaytalkserver.onrender.com/api/contents/${formData.category}`,
           contentData
         );
         alert(`Content saved successfully!`);
@@ -277,7 +277,7 @@ const FormComponent = () => {
       try {
         setIsLoading(true);
         await axios.delete(
-          `http://localhost:3000/api/contents/${selectedCategory}/${postId}`
+          `https://todaytalkserver.onrender.com/api/contents/${selectedCategory}/${postId}`
         );
         alert("Post deleted successfully!");
         fetchPosts(selectedCategory); // Refresh the posts list
@@ -295,7 +295,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       await axios.patch(
-        `http://localhost:3000/api/contents/toggle-status/${postId}`,
+        `https://todaytalkserver.onrender.com/api/contents/toggle-status/${postId}`,
         { status: newStatus }
       );
       setPosts(
@@ -316,7 +316,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       await axios.patch(
-        `http://localhost:3000/api/contents/toggle-trending/${postId}`,
+        `https://todaytalkserver.onrender.com/api/contents/toggle-trending/${postId}`,
         { trending: newTrending }
       );
       setPosts(
