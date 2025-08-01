@@ -244,7 +244,7 @@ const FormComponent = () => {
 
       return {
         location: data.publicUrl,
-        key: `https://videosbucketlookit.s3.ap-south-1.amazonaws.com/${data.key}`
+        key: `https://todaytalksimageupload.s3.ap-south-1.amazonaws.com/${data.key}`
       };
     } catch (error) {
       console.error("S3 Upload Failed:", error);
