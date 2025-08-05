@@ -468,7 +468,7 @@ const FormComponent = () => {
               className={`toggle-switch ${formData.status ? "active" : ""}`}
               onClick={toggleStatus}
             >
-              <div className="toggle-knob"></div>
+              <div className="toggle-knob1"></div>
             </div>
             <span>{formData.status ? "Active" : "Inactive"}</span>
           </div>
@@ -479,7 +479,7 @@ const FormComponent = () => {
               className={`toggle-switch ${formData.trending ? "active" : ""}`}
               onClick={toggleTrending}
             >
-              <div className="toggle-knob"></div>
+              <div className="toggle-knob1"></div>
             </div>
             <span>{formData.trending ? "Yes" : "No"}</span>
           </div>
