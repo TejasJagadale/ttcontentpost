@@ -68,15 +68,17 @@ const FormComponent = () => {
     "Stock Market",
     "Investment",
     "Marketing",
+    "Tech",
     // Health
     "Fitness",
     "Nutrition",
     "Medicine",
     // Education
-    "Online Learning",
+    "Learning",
     "Colleges",
     "Study Tips",
     // Stories
+    "Motivation",
     "Biographies",
     "Historical",
     "Short Stories",
@@ -552,6 +554,7 @@ const FormComponent = () => {
                   <div key={post._id} className="post-item">
                     <h4>{post.title}</h4>
                     <p className="post-summary">{post.summary}</p>
+                    <p className="post-summary">{post.description}</p>
                     {post.imageUrl && (
                       <div className="post-image-container">
                         <img
