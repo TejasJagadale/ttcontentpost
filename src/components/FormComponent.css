@@ -146,7 +146,7 @@ h2::after {
 }
 
 .form-group textarea {
-  min-height: 150px;
+    min-height: 250px;
   resize: vertical;
 }
 
