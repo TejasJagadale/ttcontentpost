@@ -117,7 +117,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://ttofficial.onrender.com/api/contents/${category}`
+        `https://backendofficial.onrender.com/api/contents/${category}`
       );
       setPosts(response.data);
       setSelectedCategory(category);
@@ -206,14 +206,14 @@ const FormComponent = () => {
       if (editingId) {
         // For updates, use the category from formData
         response = await axios.put(
-          `https://ttofficial.onrender.com/api/contents/${formData.category}/${editingId}`,
+          `https://backendofficial.onrender.com/api/contents/${formData.category}/${editingId}`,
           contentData
         );
         alert(`Content updated successfully!`);
       } else {
         // For new posts, also use the category from formData
         response = await axios.post(
-          `https://ttofficial.onrender.com/api/contents/${formData.category}`,
+          `https://backendofficial.onrender.com/api/contents/${formData.category}`,
           contentData
         );
         alert(`Content saved successfully!`);
@@ -234,7 +234,7 @@ const FormComponent = () => {
   const uploadToS3 = async (file) => {
     try {
       const { data } = await axios.get(
-        "https://ttofficial.onrender.com/api/s3/upload-url",
+        "https://backendofficial.onrender.com/api/s3/upload-url",
         {
           params: { fileType: file.type }
         }
@@ -279,7 +279,7 @@ const FormComponent = () => {
       try {
         setIsLoading(true);
         await axios.delete(
-          `https://ttofficial.onrender.com/api/contents/${selectedCategory}/${postId}`
+          `https://backendofficial.onrender.com/api/contents/${selectedCategory}/${postId}`
         );
         alert("Post deleted successfully!");
         fetchPosts(selectedCategory); // Refresh the posts list
@@ -297,7 +297,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       await axios.patch(
-        `https://ttofficial.onrender.com/api/contents/toggle-status/${postId}`,
+        `https://backendofficial.onrender.com/api/contents/toggle-status/${postId}`,
         { status: newStatus }
       );
       setPosts(
@@ -318,7 +318,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       await axios.patch(
-        `https://ttofficial.onrender.com/api/contents/toggle-trending/${postId}`,
+        `https://backendofficial.onrender.com/api/contents/toggle-trending/${postId}`,
         { trending: newTrending }
       );
       setPosts(
