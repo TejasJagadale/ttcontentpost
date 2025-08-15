@@ -55,7 +55,9 @@ const FormComponent = () => {
     "Education",
     "Stories",
     "Information",
-    "Updates"
+    "Updates",
+    "Sports",
+    "Entertainment"
   ];
 
   const handleCategorySelect = (category) => {
@@ -89,7 +91,12 @@ const FormComponent = () => {
     // Updates
     "Breaking News",
     "Announcements",
-    "New Releases"
+    "New Releases",
+    "SportsNews",
+    "SportsUpdate",
+    "Celebrities",
+    "CelebBuzz",
+    "EntertainmentNews"
   ];
 
   const [wordCount, setWordCount] = useState({
