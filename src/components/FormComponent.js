@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./FormComponent.css";
 import axios from "axios";
 
@@ -20,8 +20,185 @@ const FormComponent = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [editingId, setEditingId] = useState(null); // Track which post is being edited
+  const [editingId, setEditingId] = useState(null);
+  const [filteredTags, setFilteredTags] = useState([]);
+  const [showTagDropdown, setShowTagDropdown] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Define categories and their associated tags
+  const categories = [
+    "Insights",
+    "Technology",
+    "Business",
+    "Health",
+    "Education",
+    "Stories",
+    "Updates",
+    "Sports",
+    "Entertainment"
+  ];
+
+  const categoryTags = {
+    Insights: [
+      "Surprising Facts",
+      "Mind Blowing",
+      "Unexpected Discoveries",
+      "Curious Findings",
+      "Fascinating Research",
+      "Thought Provoking",
+      "Eye Opening",
+      "Aha Moments",
+      "Hidden Patterns",
+      "Revelations",
+      "Breakthrough Insights",
+      "Interesting Perspectives",
+      "Unusual Data",
+      "Mysteries Solved",
+      "Behind the Scenes",
+      "Little Known Facts",
+      "Unexplained Phenomena",
+      "Future Predictions",
+      "Historical Insights",
+      "Scientific Wonders",
+      "Cultural Revelations",
+      "Psychological Insights",
+      "Behavioral Patterns",
+      "Innovative Ideas",
+      "Trend Analysis",
+      "Unexpected Connections",
+      "World Mysteries",
+      "Human Nature",
+      "Social Insights",
+      "Extraordinary Stories"
+    ],
+    Technology: [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Cloud Computing",
+      "Cybersecurity",
+      "Blockchain",
+      "Internet of Things",
+      "Software Development",
+      "Hardware Innovations",
+      "Mobile Technology",
+      "Data Science",
+      "Robotics",
+      "Virtual Reality",
+      "Augmented Reality"
+    ],
+    Business: [
+      "Startups",
+      "Entrepreneurship",
+      "Leadership",
+      "Management",
+      "Finance",
+      "Investment Strategies",
+      "Marketing",
+      "Sales",
+      "Corporate Strategy",
+      "Economic Trends",
+      "Supply Chain",
+      "Human Resources",
+      "Business Ethics",
+      "International Trade"
+    ],
+    Health: [
+      "Nutrition",
+      "Fitness",
+      "Mental Health",
+      "Preventive Care",
+      "Medical Research",
+      "Wellness",
+      "Chronic Diseases",
+      "Healthcare Policy",
+      "Alternative Medicine",
+      "Public Health",
+      "Medical Technology",
+      "Diet & Nutrition",
+      "Exercise Science"
+    ],
+    Education: [
+      "Teaching Methods",
+      "E-Learning",
+      "Curriculum Development",
+      "Higher Education",
+      "K-12 Education",
+      "Educational Technology",
+      "Student Success",
+      "Education Policy",
+      "Special Education",
+      "Career Development",
+      "Online Learning",
+      "Educational Research"
+    ],
+    Stories: [
+      "Personal Experiences",
+      "Inspirational Stories",
+      "Biographies",
+      "Historical Accounts",
+      "Short Stories",
+      "Travel Experiences",
+      "Cultural Stories",
+      "Life Lessons",
+      "Overcoming Challenges",
+      "Human Interest",
+      "Memoirs",
+      "Adventure Stories"
+    ],
+    Updates: [
+      "Breaking News",
+      "Company Announcements",
+      "Product Launches",
+      "Policy Changes",
+      "Industry Updates",
+      "Regulatory News",
+      "Market Updates",
+      "Event Announcements",
+      "Service Updates",
+      "Appointments",
+      "Mergers & Acquisitions",
+      "Financial Results"
+    ],
+    Sports: [
+      "Football",
+      "Basketball",
+      "Cricket",
+      "Tennis",
+      "Olympics",
+      "Athlete Profiles",
+      "Game Analysis",
+      "Tournament Updates",
+      "Team Strategies",
+      "Sports Science",
+      "Injury Reports",
+      "Transfer News",
+      "Match Previews",
+      "Player Statistics"
+    ],
+    Entertainment: [
+      "Movie Reviews",
+      "Celebrity News",
+      "Music Releases",
+      "TV Shows",
+      "Award Shows",
+      "Film Festivals",
+      "Book Reviews",
+      "Concert Updates",
+      "Cultural Events",
+      "Streaming Services",
+      "Gaming News",
+      "Theater Productions"
+    ]
+  };
+
+  // Update filtered tags when category changes
+  useEffect(() => {
+    if (formData.category && categoryTags[formData.category]) {
+      setFilteredTags(categoryTags[formData.category]);
+    } else {
+      setFilteredTags([]);
+    }
+  }, [formData.category]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -48,56 +225,10 @@ const FormComponent = () => {
     fileInputRef.current.value = "";
   };
 
-  const categories = [
-    "Insights",
-    "Technology",
-    "Business",
-    "Health",
-    "Education",
-    "Stories",
-    "Updates",
-    "Sports",
-    "Entertainment"
-  ];
-
   const handleCategorySelect = (category) => {
     setShowCategoryModal(false);
     fetchPosts(category);
   };
-
-  const allTags = [
-    // Technology
-    "Stock Market",
-    "Investment",
-    "Marketing",
-    "Tech",
-    // Health
-    "Fitness",
-    "Nutrition",
-    "Medicine",
-    // Education
-    "Learning",
-    "Colleges",
-    "Study Tips",
-    // Stories
-    "Motivation",
-    "Biographies",
-    "Historical",
-    "Short Stories",
-    // Information
-    "Facts",
-    "Data",
-    "Tutorials",
-    // Updates
-    "Breaking News",
-    "Announcements",
-    "New Releases",
-    "SportsNews",
-    "SportsUpdate",
-    "Celebrities",
-    "CelebBuzz",
-    "EntertainmentNews"
-  ];
 
   const [wordCount, setWordCount] = useState({
     summary: 0,
@@ -137,7 +268,7 @@ const FormComponent = () => {
     }
   };
 
-  const handleTagChange = (tag) => {
+  const handleTagSelect = (tag) => {
     setFormData((prev) => {
       if (prev.tags.includes(tag)) {
         return {
@@ -190,14 +321,12 @@ const FormComponent = () => {
     setIsLoading(true);
 
     try {
-      // Validate required fields
       if (!formData.category) {
         throw new Error("Category is required");
       }
 
       let imageUrl = formData.imageUrl || "";
 
-      // Only upload new image if it's a file (not an existing URL)
       if (formData.image && typeof formData.image !== "string") {
         const s3Response = await uploadToS3(formData.image);
         imageUrl = s3Response.key;
@@ -211,14 +340,12 @@ const FormComponent = () => {
 
       let response;
       if (editingId) {
-        // For updates, use the category from formData
         response = await axios.put(
           `https://backendofficial.onrender.com/api/contents/${formData.category}/${editingId}`,
           contentData
         );
         alert(`Content updated successfully!`);
       } else {
-        // For new posts, also use the category from formData
         response = await axios.post(
           `https://backendofficial.onrender.com/api/contents/${formData.category}`,
           contentData
@@ -265,7 +392,7 @@ const FormComponent = () => {
     setShowModal(false);
     setEditingId(post._id);
     setFormData({
-      category: post.category, // Ensure this is set
+      category: post.category,
       title: post.title,
       summary: post.summary,
       description: post.description,
@@ -289,7 +416,7 @@ const FormComponent = () => {
           `https://backendofficial.onrender.com/api/contents/${selectedCategory}/${postId}`
         );
         alert("Post deleted successfully!");
-        fetchPosts(selectedCategory); // Refresh the posts list
+        fetchPosts(selectedCategory);
       } catch (error) {
         console.error("Error deleting post:", error);
         alert(`Error: ${error.response?.data?.message || error.message}`);
@@ -299,7 +426,6 @@ const FormComponent = () => {
     }
   };
 
-  // Handle status toggle for list items
   const handleStatusToggle = async (postId, newStatus) => {
     try {
       setIsLoading(true);
@@ -320,7 +446,6 @@ const FormComponent = () => {
     }
   };
 
-  // Handle trending toggle for list items
   const handleTrendingToggle = async (postId, newTrending) => {
     try {
       setIsLoading(true);
@@ -370,6 +495,68 @@ const FormComponent = () => {
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Tags Selection - Now a dropdown based on category */}
+        <div className="form-group">
+          <label>Tags</label>
+          <div className="tags-dropdown-container">
+            <button
+              type="button"
+              className="tags-dropdown-toggle"
+              onClick={() => setShowTagDropdown(!showTagDropdown)}
+              disabled={!formData.category}
+            >
+              Select Tags{" "}
+              {formData.tags.length > 0
+                ? `(${formData.tags.length} selected)`
+                : ""}
+            </button>
+
+            {showTagDropdown && formData.category && (
+              <div className="tags-dropdown">
+                {filteredTags.length > 0 ? (
+                  filteredTags.map((tag, index) => (
+                    <div key={index} className="tag-dropdown-item">
+                      <input
+                        type="checkbox"
+                        id={`tag-${index}`}
+                        checked={formData.tags.includes(tag)}
+                        onChange={() => handleTagSelect(tag)}
+                      />
+                      <label htmlFor={`tag-${index}`}>{tag}</label>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-tags-message">
+                    No tags available for this category
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Show selected tags */}
+            {formData.tags.length > 0 && (
+              <div className="selected-tags">
+                {formData.tags.map((tag, index) => (
+                  <span key={index} className="selected-tag">
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => handleTagSelect(tag)}
+                      className="remove-tag-btn"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {!formData.category && (
+              <div className="tags-message">Please select a category first</div>
+            )}
+          </div>
         </div>
 
         {/* Title Input */}
@@ -447,24 +634,6 @@ const FormComponent = () => {
               </p>
             </div>
           )}
-        </div>
-
-        {/* Tags Selection */}
-        <div className="form-group">
-          <label>Tags</label>
-          <div className="tags-container">
-            {allTags.map((tag, index) => (
-              <div key={index} className="tag-item">
-                <input
-                  type="checkbox"
-                  id={`tag-${index}`}
-                  checked={formData.tags.includes(tag)}
-                  onChange={() => handleTagChange(tag)}
-                />
-                <label htmlFor={`tag-${index}`}>{tag}</label>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Status and Trending Toggles */}
