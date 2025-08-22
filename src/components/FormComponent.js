@@ -49,12 +49,12 @@ const FormComponent = () => {
   };
 
   const categories = [
+    "Insights",
     "Technology",
     "Business",
     "Health",
     "Education",
     "Stories",
-    "Information",
     "Updates",
     "Sports",
     "Entertainment"
