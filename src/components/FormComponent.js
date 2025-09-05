@@ -255,7 +255,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://backendofficial-odsz.onrender.com/api/contents/${category}`
+        `https://api.todaytalks.in/api/contents/${category}`
       );
       setPosts(response.data);
       setSelectedCategory(category);
@@ -341,13 +341,13 @@ const FormComponent = () => {
       let response;
       if (editingId) {
         response = await axios.put(
-          `https://backendofficial-odsz.onrender.com/api/contents/${formData.category}/${editingId}`,
+          `https://api.todaytalks.in/api/contents/${formData.category}/${editingId}`,
           contentData
         );
         alert(`Content updated successfully!`);
       } else {
         response = await axios.post(
-          `https://backendofficial-odsz.onrender.com/api/contents/${formData.category}`,
+          `https://api.todaytalks.in/api/contents/${formData.category}`,
           contentData
         );
         alert(`Content saved successfully!`);
@@ -368,7 +368,7 @@ const FormComponent = () => {
   const uploadToS3 = async (file) => {
     try {
       const { data } = await axios.get(
-        "https://backendofficial-odsz.onrender.com/api/s3/upload-url",
+        "https://api.todaytalks.in/api/s3/upload-url",
         {
           params: { fileType: file.type }
         }
@@ -413,7 +413,7 @@ const FormComponent = () => {
       try {
         setIsLoading(true);
         await axios.delete(
-          `https://backendofficial-odsz.onrender.com/api/contents/${selectedCategory}/${postId}`
+          `https://api.todaytalks.in/api/contents/${selectedCategory}/${postId}`
         );
         alert("Post deleted successfully!");
         fetchPosts(selectedCategory);
@@ -430,7 +430,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       await axios.patch(
-        `https://backendofficial-odsz.onrender.com/api/contents/toggle-status/${postId}`,
+        `https://api.todaytalks.in/api/contents/toggle-status/${postId}`,
         { status: newStatus }
       );
       setPosts(
@@ -450,7 +450,7 @@ const FormComponent = () => {
     try {
       setIsLoading(true);
       await axios.patch(
-        `https://backendofficial-odsz.onrender.com/api/contents/toggle-trending/${postId}`,
+        `https://api.todaytalks.in/api/contents/toggle-trending/${postId}`,
         { trending: newTrending }
       );
       setPosts(
