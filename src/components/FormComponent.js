@@ -11,7 +11,7 @@ const FormComponent = () => {
     tags: [],
     status: false,
     trending: false,
-    image: null
+    image: null,
   });
 
   const [previewImage, setPreviewImage] = useState(null);
@@ -23,7 +23,16 @@ const FormComponent = () => {
   const [editingId, setEditingId] = useState(null);
   const [filteredTags, setFilteredTags] = useState([]);
   const [showTagDropdown, setShowTagDropdown] = useState(false);
+  const [expandedPostId, setExpandedPostId] = useState(null);
   const fileInputRef = useRef(null);
+
+  const toggleExpand = (postId) => {
+    if (expandedPostId === postId) {
+      setExpandedPostId(null);
+    } else {
+      setExpandedPostId(postId);
+    }
+  };
 
   // Define categories and their associated tags
   const categories = [
@@ -35,7 +44,7 @@ const FormComponent = () => {
     "Stories",
     "Updates",
     "Sports",
-    "Entertainment"
+    "Entertainment",
   ];
 
   const categoryTags = {
@@ -69,7 +78,7 @@ const FormComponent = () => {
       "World Mysteries",
       "Human Nature",
       "Social Insights",
-      "Extraordinary Stories"
+      "Extraordinary Stories",
     ],
     Technology: [
       "Artificial Intelligence",
@@ -84,7 +93,7 @@ const FormComponent = () => {
       "Data Science",
       "Robotics",
       "Virtual Reality",
-      "Augmented Reality"
+      "Augmented Reality",
     ],
     Business: [
       "Startups",
@@ -100,7 +109,7 @@ const FormComponent = () => {
       "Supply Chain",
       "Human Resources",
       "Business Ethics",
-      "International Trade"
+      "International Trade",
     ],
     Health: [
       "Nutrition",
@@ -115,7 +124,7 @@ const FormComponent = () => {
       "Public Health",
       "Medical Technology",
       "Diet & Nutrition",
-      "Exercise Science"
+      "Exercise Science",
     ],
     Education: [
       "Teaching Methods",
@@ -129,7 +138,7 @@ const FormComponent = () => {
       "Special Education",
       "Career Development",
       "Online Learning",
-      "Educational Research"
+      "Educational Research",
     ],
     Stories: [
       "Personal Experiences",
@@ -143,7 +152,7 @@ const FormComponent = () => {
       "Overcoming Challenges",
       "Human Interest",
       "Memoirs",
-      "Adventure Stories"
+      "Adventure Stories",
     ],
     Updates: [
       "Breaking News",
@@ -157,7 +166,7 @@ const FormComponent = () => {
       "Service Updates",
       "Appointments",
       "Mergers & Acquisitions",
-      "Financial Results"
+      "Financial Results",
     ],
     Sports: [
       "Football",
@@ -173,7 +182,7 @@ const FormComponent = () => {
       "Injury Reports",
       "Transfer News",
       "Match Previews",
-      "Player Statistics"
+      "Player Statistics",
     ],
     Entertainment: [
       "Movie Reviews",
@@ -187,8 +196,8 @@ const FormComponent = () => {
       "Cultural Events",
       "Streaming Services",
       "Gaming News",
-      "Theater Productions"
-    ]
+      "Theater Productions",
+    ],
   };
 
   // Update filtered tags when category changes
@@ -205,7 +214,7 @@ const FormComponent = () => {
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        image: file
+        image: file,
       }));
 
       const reader = new FileReader();
@@ -219,7 +228,7 @@ const FormComponent = () => {
   const removeImage = () => {
     setFormData((prev) => ({
       ...prev,
-      image: null
+      image: null,
     }));
     setPreviewImage(null);
     fileInputRef.current.value = "";
@@ -232,21 +241,21 @@ const FormComponent = () => {
 
   const [wordCount, setWordCount] = useState({
     summary: 0,
-    description: 0
+    description: 0,
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
     if (name === "summary" || name === "description") {
       const words = value.trim() === "" ? 0 : value.trim().split(/\s+/).length;
       setWordCount((prev) => ({
         ...prev,
-        [name]: words
+        [name]: words,
       }));
     }
   };
@@ -273,12 +282,12 @@ const FormComponent = () => {
       if (prev.tags.includes(tag)) {
         return {
           ...prev,
-          tags: prev.tags.filter((t) => t !== tag)
+          tags: prev.tags.filter((t) => t !== tag),
         };
       } else {
         return {
           ...prev,
-          tags: [...prev.tags, tag]
+          tags: [...prev.tags, tag],
         };
       }
     });
@@ -287,14 +296,14 @@ const FormComponent = () => {
   const toggleStatus = () => {
     setFormData((prev) => ({
       ...prev,
-      status: !prev.status
+      status: !prev.status,
     }));
   };
 
   const toggleTrending = () => {
     setFormData((prev) => ({
       ...prev,
-      trending: !prev.trending
+      trending: !prev.trending,
     }));
   };
 
@@ -307,7 +316,7 @@ const FormComponent = () => {
       tags: [],
       status: false,
       trending: false,
-      image: null
+      image: null,
     });
     setPreviewImage(null);
     setEditingId(null);
@@ -335,7 +344,7 @@ const FormComponent = () => {
       const contentData = {
         ...formData,
         imageUrl,
-        tags: Array.isArray(formData.tags) ? formData.tags : [formData.tags]
+        tags: Array.isArray(formData.tags) ? formData.tags : [formData.tags],
       };
 
       let response;
@@ -370,17 +379,17 @@ const FormComponent = () => {
       const { data } = await axios.get(
         "https://api.todaytalks.in/api/s3/upload-url",
         {
-          params: { fileType: file.type }
+          params: { fileType: file.type },
         }
       );
 
       await axios.put(data.uploadUrl, file, {
-        headers: { "Content-Type": file.type }
+        headers: { "Content-Type": file.type },
       });
 
       return {
         location: data.publicUrl,
-        key: `https://todaytalksimageupload.s3.ap-south-1.amazonaws.com/${data.key}`
+        key: `https://todaytalksimageupload.s3.ap-south-1.amazonaws.com/${data.key}`,
       };
     } catch (error) {
       console.error("S3 Upload Failed:", error);
@@ -400,7 +409,7 @@ const FormComponent = () => {
       status: post.status,
       trending: post.trending,
       image: post.imageUrl,
-      imageUrl: post.imageUrl
+      imageUrl: post.imageUrl,
     });
 
     if (post.imageUrl) {
@@ -720,81 +729,117 @@ const FormComponent = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content posts-modal">
-            <button className="close-modal" onClick={() => setShowModal(false)}>
-              ×
-            </button>
-            <h3>Posts in {selectedCategory}</h3>
+            <div className="modal-header">
+              <h3>Posts in {selectedCategory}</h3>
+              <button
+                className="close-modal"
+                onClick={() => setShowModal(false)}
+                aria-label="Close modal"
+              >
+                ×
+              </button>
+            </div>
+
             <div className="posts-list">
               {posts.length > 0 ? (
                 posts.map((post) => (
                   <div key={post._id} className="post-item">
-                    <h4>{post.title}</h4>
-                    <p className="post-summary">{post.summary}</p>
-                    <p className="post-summary">{post.description}</p>
-                    {post.imageUrl && (
-                      <div className="post-image-container">
-                        <img
-                          src={post.imageUrl}
-                          alt={post.title}
-                          className="post-image"
-                        />
-                      </div>
-                    )}
-                    <div className="post-tags">
-                      {post.tags.map((tag, i) => (
-                        <span key={i} className="tag">
-                          {tag}
+                    <div className="post-header">
+                      <h4 onClick={() => toggleExpand(post._id)}>
+                        {post.title}
+                        <span className="expand-icon">
+                          {expandedPostId === post._id ? "▼" : "▶"}
                         </span>
-                      ))}
-                    </div>
-                    <div className="post-actions">
-                      <button
-                        className="edit-btn"
-                        onClick={() => handleEdit(post)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={() => handleDelete(post._id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    <div className="toggle-actions">
-                      <div className="toggle-group">
-                        <span>Status:</span>
-                        <div
-                          className={`toggle-switch ${
-                            post.status ? "active" : ""
-                          }`}
-                          onClick={() =>
-                            handleStatusToggle(post._id, !post.status)
-                          }
+                      </h4>
+
+                      <div className="post-actions">
+                        <button
+                          className="edit-btn"
+                          onClick={() => handleEdit(post)}
+                          aria-label={`Edit ${post.title}`}
                         >
-                          <div className="toggle-knob1"></div>
-                        </div>
-                        <span>{post.status ? "Active" : "Inactive"}</span>
+                          Edit
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDelete(post._id)}
+                          aria-label={`Delete ${post.title}`}
+                        >
+                          Delete
+                        </button>
                       </div>
-                      <div className="toggle-group">
-                        <span>Trending:</span>
-                        <div
-                          className={`toggle-switch ${
-                            post.trending ? "active" : ""
-                          }`}
-                          onClick={() =>
-                            handleTrendingToggle(post._id, !post.trending)
-                          }
-                        >
-                          <div className="toggle-knob1"></div>
+                    </div>
+
+                    <div
+                      className={`post-details ${
+                        expandedPostId === post._id ? "expanded" : "collapsed"
+                      }`}
+                    >
+                      <p className="post-summary">{post.summary}</p>
+                      <p className="post-description">{post.description}</p>
+
+                      {post.imageUrl && (
+                        <div className="post-image-container">
+                          <img
+                            src={post.imageUrl}
+                            alt={post.title}
+                            className="post-image"
+                          />
                         </div>
-                        <span>{post.trending ? "Yes" : "No"}</span>
+                      )}
+
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="post-tags">
+                          {post.tags.map((tag, i) => (
+                            <span key={i} className="tag">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="toggle-actions">
+                        <div className="toggle-group">
+                          <span>Status:</span>
+                          <div
+                            className={`toggle-switch ${
+                              post.status ? "active" : ""
+                            }`}
+                            onClick={() =>
+                              handleStatusToggle(post._id, !post.status)
+                            }
+                            aria-label={`Toggle status for ${post.title}`}
+                          >
+                            <div className="toggle-knob"></div>
+                          </div>
+                          <span className="toggle-label">
+                            {post.status ? "Active" : "Inactive"}
+                          </span>
+                        </div>
+
+                        <div className="toggle-group">
+                          <span>Trending:</span>
+                          <div
+                            className={`toggle-switch ${
+                              post.trending ? "active" : ""
+                            }`}
+                            onClick={() =>
+                              handleTrendingToggle(post._id, !post.trending)
+                            }
+                            aria-label={`Toggle trending for ${post.title}`}
+                          >
+                            <div className="toggle-knob"></div>
+                          </div>
+                          <span className="toggle-label">
+                            {post.trending ? "Yes" : "No"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <p>No posts found in this category.</p>
+                <p className="no-posts">No posts found in this category.</p>
               )}
             </div>
           </div>
